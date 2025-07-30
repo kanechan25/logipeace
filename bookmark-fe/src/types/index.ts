@@ -33,12 +33,6 @@ export interface PaginatedResponse<T> {
   meta: PaginationMeta
 }
 
-// Stats response from backend
-export interface BookmarkStats {
-  totalBookmarks: number
-}
-
-// Delete response from backend
 export interface DeleteBookmarkResponse {
   message: string
   id: string

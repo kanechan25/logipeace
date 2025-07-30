@@ -67,7 +67,7 @@ export class InMemoryBookmarkRepository implements IBookmarkRepository, OnModule
         id: uuidv4(),
         title: `${titlePrefix} ${category} ${i + 1}`,
         url: `https://${domain}/${category.toLowerCase().replace(' ', '-')}/item-${i + 1}`,
-        description: `This is a detailed description for ${category} bookmark #${i + 1}. It contains valuable information and resources about ${category.toLowerCase()}.`,
+        description: `This is a description for ${category} bookmark #${i + 1}. It contains information and resources about ${category.toLowerCase()}.`,
         createdAt,
         updatedAt: createdAt,
       });
@@ -150,9 +150,5 @@ export class InMemoryBookmarkRepository implements IBookmarkRepository, OnModule
     }
 
     return true;
-  }
-
-  async count(): Promise<number> {
-    return this.bookmarks.size;
   }
 }

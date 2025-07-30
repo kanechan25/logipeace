@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Bookmark {
   @ApiProperty({
-    description: 'Unique identifier for the bookmark',
-    example: '1g2g3g4-f8f8-12d3-a456-426614174000',
+    description: 'Unique uuid4 identifier for the bookmark',
+    example: '442f3005-786c-49f3-8272-2e93a9a5f15c',
   })
   id: string;
 

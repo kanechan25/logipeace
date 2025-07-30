@@ -144,6 +144,46 @@ export class BookmarksController {
     return this.bookmarksService.findOne(id);
   }
 
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Delete a bookmark',
+    description: 'Remove a bookmark by its unique identifier',
+  })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    description: 'Bookmark unique uuid4 identifier',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Bookmark successfully deleted',
+    schema: {
+      example: {
+        message: 'Bookmark deleted successfully',
+        id: '123e4567-e89b-12d3-a456-426614174000',
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Bookmark not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'Bookmark with ID 123e4567-e89b-12d3-a456-426614174000 not found',
+        error: 'Not Found',
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid bookmark ID',
+  })
+  async remove(@Param('id') id: string): Promise<{ message: string; id: string }> {
+    return this.bookmarksService.remove(id);
+  }
+
+  // NOT required, but it's here for future reference
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -186,62 +226,5 @@ export class BookmarksController {
     @Body() updateBookmarkDto: UpdateBookmarkDto,
   ): Promise<Bookmark> {
     return this.bookmarksService.update(id, updateBookmarkDto);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Delete a bookmark',
-    description: 'Remove a bookmark by its unique identifier',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    description: 'Bookmark unique identifier',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Bookmark successfully deleted',
-    schema: {
-      example: {
-        message: 'Bookmark deleted successfully',
-        id: '123e4567-e89b-12d3-a456-426614174000',
-      },
-    },
-  })
-  @ApiNotFoundResponse({
-    description: 'Bookmark not found',
-    schema: {
-      example: {
-        statusCode: 404,
-        message: 'Bookmark with ID 123e4567-e89b-12d3-a456-426614174000 not found',
-        error: 'Not Found',
-      },
-    },
-  })
-  @ApiBadRequestResponse({
-    description: 'Invalid bookmark ID',
-  })
-  async remove(@Param('id') id: string): Promise<{ message: string; id: string }> {
-    return this.bookmarksService.remove(id);
-  }
-
-  @Get('meta/stats')
-  @ApiOperation({
-    summary: 'Get bookmark statistics',
-    description: 'Retrieve general statistics about bookmarks',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Statistics successfully retrieved',
-    schema: {
-      example: {
-        totalBookmarks: 5000,
-      },
-    },
-  })
-  async getStats(): Promise<{ totalBookmarks: number }> {
-    return this.bookmarksService.getStats();
   }
 }

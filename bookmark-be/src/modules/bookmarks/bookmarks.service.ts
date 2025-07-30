@@ -15,7 +15,6 @@ export class BookmarksService {
 
   async create(createBookmarkDto: CreateBookmarkDto): Promise<Bookmark> {
     try {
-      // Validate URL format more strictly
       new URL(createBookmarkDto.url);
     } catch (error) {
       throw new BadRequestException('Invalid URL format provided');
@@ -36,10 +35,8 @@ export class BookmarksService {
   async findAll(paginationQuery: PaginationQueryDto) {
     const { page = 1, limit = 20 } = paginationQuery;
 
-    // Ensure valid pagination parameters
     const validPage = Math.max(1, page);
     const validLimit = Math.min(Math.max(1, limit), 100); // Max 100 items per page
-
     const result = await this.bookmarkRepository.findAll(validPage, validLimit);
 
     return {
@@ -59,21 +56,19 @@ export class BookmarksService {
     if (!id || typeof id !== 'string') {
       throw new BadRequestException('Invalid bookmark ID provided');
     }
-
     const bookmark = await this.bookmarkRepository.findById(id);
     if (!bookmark) {
       throw new NotFoundException(`Bookmark with ID ${id} not found`);
     }
-
     return bookmark;
   }
 
+  // NOT required, but it's here for future reference
   async update(id: string, updateBookmarkDto: UpdateBookmarkDto): Promise<Bookmark> {
     if (!id || typeof id !== 'string') {
       throw new BadRequestException('Invalid bookmark ID provided');
     }
 
-    // Validate URL format if provided
     if (updateBookmarkDto.url) {
       try {
         new URL(updateBookmarkDto.url);
@@ -82,7 +77,6 @@ export class BookmarksService {
       }
     }
 
-    // Trim string fields if provided
     const updateData: Partial<Bookmark> = {};
     if (updateBookmarkDto.title !== undefined) {
       updateData.title = updateBookmarkDto.title.trim();

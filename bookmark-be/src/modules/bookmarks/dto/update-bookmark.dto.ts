@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsUrl, IsOptional, MaxLength } from 'class-validator';
 
+// Update NOT required, but I built it for future reference
 export class UpdateBookmarkDto {
   @ApiPropertyOptional({
     description: 'Title of the bookmark',

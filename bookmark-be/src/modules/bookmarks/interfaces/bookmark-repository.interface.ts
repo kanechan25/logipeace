@@ -34,14 +34,6 @@ export interface IBookmarkRepository {
   findById(id: string): Promise<Bookmark | null>;
 
   /**
-   * Update an existing bookmark
-   * @param id - The bookmark ID to update
-   * @param updateData - Partial bookmark data to update
-   * @returns The updated bookmark if found, null otherwise
-   */
-  update(id: string, updateData: Partial<Bookmark>): Promise<Bookmark | null>;
-
-  /**
    * Delete a bookmark by ID
    * @param id - The bookmark ID to delete
    * @returns True if deleted, false if not found
@@ -49,10 +41,12 @@ export interface IBookmarkRepository {
   deleteById(id: string): Promise<boolean>;
 
   /**
-   * Get total count of bookmarks
-   * @returns Total number of bookmarks
+   * Update NOT required, but it's here for future reference
+   * @param id - The bookmark ID to update
+   * @param updateData - Partial bookmark data to update
+   * @returns The updated bookmark if found, null otherwise
    */
-  count(): Promise<number>;
+  update(id: string, updateData: Partial<Bookmark>): Promise<Bookmark | null>;
 }
 
 export const IBookmarkRepository = Symbol('IBookmarkRepository');

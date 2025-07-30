@@ -4,7 +4,6 @@ import {
   CreateBookmarkRequest,
   UpdateBookmarkRequest,
   PaginatedResponse,
-  BookmarkStats,
   DeleteBookmarkResponse,
 } from '@/types'
 import { API_CONFIG } from '@/configs/api'
@@ -30,7 +29,7 @@ export const bookmarksApi = createApi({
       providesTags: ['Bookmark'],
     }),
 
-    // Get single bookmark by ID
+    // get bookmark by id
     getBookmark: builder.query<Bookmark, string>({
       query: (id) => `/bookmarks/${id}`,
       providesTags: (result, error, id) => [{ type: 'Bookmark', id }],
@@ -46,7 +45,7 @@ export const bookmarksApi = createApi({
       invalidatesTags: ['Bookmark'],
     }),
 
-    // Update existing bookmark
+    // update NOT required, but I built it for future reference
     updateBookmark: builder.mutation<Bookmark, { id: string; data: UpdateBookmarkRequest }>({
       query: ({ id, data }) => ({
         url: `/bookmarks/${id}`,
@@ -64,12 +63,6 @@ export const bookmarksApi = createApi({
       }),
       invalidatesTags: ['Bookmark'],
     }),
-
-    // Get bookmark statistics
-    getBookmarkStats: builder.query<BookmarkStats, void>({
-      query: () => '/bookmarks/meta/stats',
-      providesTags: ['Bookmark'],
-    }),
   }),
 })
 
@@ -79,5 +72,4 @@ export const {
   useAddBookmarkMutation,
   useUpdateBookmarkMutation,
   useDeleteBookmarkMutation,
-  useGetBookmarkStatsQuery,
 } = bookmarksApi
