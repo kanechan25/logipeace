@@ -6,16 +6,18 @@ import {
   PaginatedResponse,
   BookmarkStats,
   DeleteBookmarkResponse,
-} from '../../types'
+} from '@/types'
+import { API_CONFIG } from '@/configs/api'
 
 export const bookmarksApi = createApi({
   reducerPath: 'bookmarksApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3001/api/v1',
+    baseUrl: API_CONFIG.baseUrl,
     prepareHeaders: (headers) => {
       headers.set('Content-Type', 'application/json')
       return headers
     },
+    timeout: API_CONFIG.timeout,
   }),
   tagTypes: ['Bookmark'],
   endpoints: (builder) => ({

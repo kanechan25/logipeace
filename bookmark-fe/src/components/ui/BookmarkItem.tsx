@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Bookmark } from '../../types'
-import { useDeleteBookmarkMutation } from '../../stores/slices/bookmarks'
+import { useDeleteBookmarkMutation } from '../../stores/slices/query/bookmarks'
 
 dayjs.extend(relativeTime)
 
@@ -16,8 +16,8 @@ interface BookmarkItemProps {
 
 const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style }) => {
   const [deleteBookmark, { isLoading: isDeleting }] = useDeleteBookmarkMutation()
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [mounted, setMounted] = useState<boolean>(false)
 
   // Fix hydration issue - only show relative time after client-side mount
   useEffect(() => {
@@ -55,12 +55,12 @@ const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style 
   }
 
   return (
-    <div style={style} className='px-2'>
-      <div className='bg-bg-secondary border border-border rounded-lg p-4 hover:border-primary/50 transition-colors animate-fade-in'>
+    <div style={style} className='p-2'>
+      <div className='bg-bg-secondary border border-border rounded-lg p-2 hover:border-primary/50 transition-colors animate-fade-in'>
         {/* Header */}
         <div className='flex items-start justify-between mb-2'>
           <div className='flex-1 min-w-0'>
-            <h3 className='text-text font-medium text-sm line-clamp-2 mb-1'>{bookmark.title}</h3>
+            <h3 className='text-text font-medium text-sm line-clamp-2'>{bookmark.title}</h3>
             <a
               href={bookmark.url}
               target='_blank'
@@ -118,13 +118,12 @@ const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style 
 
         {/* Description */}
         {bookmark.description && (
-          <p className='text-text-secondary text-xs mb-2 line-clamp-2'>{bookmark.description}</p>
+          <p className='text-text-secondary text-xs mb-1 line-clamp-2'>{bookmark.description}</p>
         )}
 
         {/* Metadata */}
         <div className='flex items-center justify-between text-xs text-text-muted'>
           <span suppressHydrationWarning>{formatDate(bookmark.createdAt)}</span>
-          <span className='text-xs px-2 py-1 bg-bg-tertiary rounded'>#{bookmark.id.slice(-8)}</span>
         </div>
       </div>
     </div>

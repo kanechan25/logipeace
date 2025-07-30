@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 
-/* Base theme variables */
 :root {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -26,34 +25,6 @@
   --color-warning: #f59e0b;
 }
 
-/* Green theme */
-[data-theme='green'] {
-  --color-primary: #10b981;
-  --color-primary-hover: #059669;
-  --color-primary-light: #d1fae5;
-}
-
-/* Red theme */
-[data-theme='red'] {
-  --color-primary: #ef4444;
-  --color-primary-hover: #dc2626;
-  --color-primary-light: #fee2e2;
-}
-
-/* Purple theme */
-[data-theme='purple'] {
-  --color-primary: #8b5cf6;
-  --color-primary-hover: #7c3aed;
-  --color-primary-light: #ede9fe;
-}
-
-/* Orange theme */
-[data-theme='orange'] {
-  --color-primary: #f97316;
-  --color-primary-hover: #ea580c;
-  --color-primary-light: #fed7aa;
-}
-
 /* Dark theme */
 .dark {
   --color-bg: #0f172a;
@@ -64,31 +35,6 @@
   --color-text-muted: #64748b;
   --color-border: #334155;
   --color-border-light: #475569;
-}
-
-/* Dark theme with blue */
-.dark[data-theme='blue'] {
-  --color-primary-light: #1e3a8a;
-}
-
-/* Dark theme with green */
-.dark[data-theme='green'] {
-  --color-primary-light: #064e3b;
-}
-
-/* Dark theme with red */
-.dark[data-theme='red'] {
-  --color-primary-light: #7f1d1d;
-}
-
-/* Dark theme with purple */
-.dark[data-theme='purple'] {
-  --color-primary-light: #581c87;
-}
-
-/* Dark theme with orange */
-.dark[data-theme='orange'] {
-  --color-primary-light: #9a3412;
 }
 
 @theme inline {
@@ -117,6 +63,10 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button {
+  cursor: pointer;
 }
 
 /* Custom scrollbar */

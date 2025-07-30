@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { useDebounce } from '../../hooks'
+import { useDebounce } from '@/hooks/useDebounce'
 
 interface SearchBarProps {
   onSearch: (query: string) => void
@@ -9,7 +9,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search bookmarks...' }) => {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
 

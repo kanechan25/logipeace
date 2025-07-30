@@ -13,7 +13,7 @@ const ThemeToggle: React.FC = () => {
     <div className='flex items-center space-x-2'>
       <button
         onClick={() => dispatch(toggleThemeMode())}
-        className='p-2 rounded-lg border border-border hover:border-primary transition-colors cursor-pointer'
+        className='p-2 rounded-lg border border-border hover:border-primary transition-colors'
       >
         {mode === 'light' ? (
           <svg className='w-4 h-4 text-text' fill='none' stroke='currentColor' viewBox='0 0 24 24'>

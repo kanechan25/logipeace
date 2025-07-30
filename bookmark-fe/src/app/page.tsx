@@ -1,6 +1,6 @@
 import React from 'react'
 import ErrorBoundary from '@/components/hocs/ErrorBoundary'
-import BookmarkForm from '@/components/ui/BookmarkForm'
+import CreateBookmark from '@/components/ui/CreateBookmark'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import BookmarkList from '@/components/ui/BookmarkList'
@@ -10,14 +10,18 @@ export default function BookmarkManager() {
     <div className='min-h-screen bg-bg'>
       <Header />
 
-      {/* Main Content */}
-      <main className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+      <main className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[75vh]'>
         <div className='space-y-8'>
-          {/* Add Bookmark Section */}
-          {/* TODO: move this to separate Modal component => Click Create Bookmark Button to open Modal*/}
-          <ErrorBoundary>
-            <BookmarkForm />
-          </ErrorBoundary>
+          <div className='flex justify-between items-center'>
+            <div>
+              <h1 className='text-2xl font-bold text-text'>My Bookmarks</h1>
+              <p className='text-text-secondary text-sm mt-1'>Organize and manage your favorite links</p>
+            </div>
+
+            <ErrorBoundary>
+              <CreateBookmark />
+            </ErrorBoundary>
+          </div>
 
           {/* Search and List Section */}
           <div className='space-y-6'>

@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import themeReducer from './slices/theme'
-import { bookmarksApi } from './slices/bookmarks'
+import { bookmarksApi } from './slices/query/bookmarks'
 
 export const store = configureStore({
   reducer: {
@@ -16,4 +16,4 @@ setupListeners(store.dispatch)
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-export { useGetBookmarksQuery, useAddBookmarkMutation, useDeleteBookmarkMutation } from './slices/bookmarks'
+export { useGetBookmarksQuery, useAddBookmarkMutation, useDeleteBookmarkMutation } from './slices/query/bookmarks'
