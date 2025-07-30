@@ -11,14 +11,14 @@ A robust, production-ready backend API for managing bookmarks built with NestJS,
 - ✅ **Scalable Architecture**: Layered architecture with Repository pattern
 - ✅ **Type Safety**: Full TypeScript implementation
 - ✅ **Production Ready**: CORS, validation pipes, error handling
-- ✅ **Mock Data**: 5,000 pre-generated bookmarks for testing
+- ✅ **Mock Data**: 5,000 pre-generated bookmarks (in-memory storage)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- pnpm/npm or yarn
 
 ### Installation
 
@@ -28,20 +28,13 @@ A robust, production-ready backend API for managing bookmarks built with NestJS,
    npm install
    ```
 
-2. **Environment setup:**
-
-   ```bash
-   cp .env.example .env
-   # Edit .env with your preferred settings
-   ```
-
-3. **Start the development server:**
+2. **Start the development server:**
 
    ```bash
    npm run start:dev
    ```
 
-4. **Access the application:**
+3. **Access the application:**
    - API Base URL: `http://localhost:3001/api/v1`
    - Swagger Documentation: `http://localhost:3001/api/docs`
 
@@ -49,14 +42,13 @@ A robust, production-ready backend API for managing bookmarks built with NestJS,
 
 ### Bookmarks
 
-| Method   | Endpoint                       | Description                  |
-| -------- | ------------------------------ | ---------------------------- |
-| `POST`   | `/api/v1/bookmarks`            | Create a new bookmark        |
-| `GET`    | `/api/v1/bookmarks`            | Get paginated bookmarks list |
-| `GET`    | `/api/v1/bookmarks/:id`        | Get bookmark by ID           |
-| `DELETE` | `/api/v1/bookmarks/:id`        | Delete bookmark by ID        |
-| `PUT`    | `/api/v1/bookmarks/:id`        | Update bookmark by ID        |
-| `GET`    | `/api/v1/bookmarks/meta/stats` | Get bookmark statistics      |
+| Method   | Endpoint                | Description                  |
+| -------- | ----------------------- | ---------------------------- |
+| `POST`   | `/api/v1/bookmarks`     | Create a new bookmark        |
+| `GET`    | `/api/v1/bookmarks`     | Get paginated bookmarks list |
+| `GET`    | `/api/v1/bookmarks/:id` | Get bookmark by ID           |
+| `DELETE` | `/api/v1/bookmarks/:id` | Delete bookmark by ID        |
+| `PUT`    | `/api/v1/bookmarks/:id` | Update bookmark by ID        |
 
 ### Example Usage
 
@@ -125,36 +117,6 @@ src/
 └── app.module.ts                    # Root module
 ```
 
-## ⚙️ Configuration
-
-### Environment Variables
-
-| Variable            | Default                 | Description             |
-| ------------------- | ----------------------- | ----------------------- |
-| `PORT`              | `3001`                  | Server port             |
-| `NODE_ENV`          | `development`           | Environment mode        |
-| `FRONTEND_URL`      | `http://localhost:3000` | CORS origin             |
-| `DEFAULT_PAGE_SIZE` | `20`                    | Default pagination size |
-| `MAX_PAGE_SIZE`     | `100`                   | Maximum pagination size |
-
-### CORS Configuration
-
-The API is pre-configured to work with a frontend running on `localhost:3000`. Update CORS settings in `main.ts` for production use.
-
-## 🧪 Data Storage
-
-### In-Memory Storage
-
-- Uses `Map` for O(1) lookups by ID
-- Maintains insertion order with array for pagination
-- Pre-populated with 5,000 diverse mock bookmarks
-- Newest bookmarks appear first (reverse chronological)
-
-### Mock Data Categories
-
-- Technology, News, Social Media, Entertainment
-- Education, Shopping, Sports, Health, Finance, Travel
-
 ## 🔧 Development
 
 ### Available Scripts
@@ -168,92 +130,4 @@ npm run start:debug    # Start with debug mode
 npm run build          # Build for production
 npm run start:prod     # Start production server
 
-# Code Quality
-npm run lint           # Run ESLint
-npm run format         # Format with Prettier
-npm run test           # Run unit tests
-npm run test:e2e       # Run e2e tests
 ```
-
-### Code Quality Tools
-
-- **ESLint**: Code linting with TypeScript rules
-- **Prettier**: Code formatting with consistent style
-- **Class Validator**: Runtime DTO validation
-- **TypeScript**: Static type checking
-
-## 📖 API Documentation
-
-Interactive API documentation is available at `/api/docs` when the server is running.
-
-Features:
-
-- Complete endpoint documentation
-- Request/response schemas
-- Try-it-out functionality
-- Model definitions
-- Example payloads
-
-## 🚀 Production Deployment
-
-### Build for Production
-
-```bash
-npm run build
-npm run start:prod
-```
-
-### Docker Support (Optional)
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist ./dist
-EXPOSE 3001
-CMD ["node", "dist/main"]
-```
-
-## 🛠️ Extending the Application
-
-### Adding New Endpoints
-
-1. Add methods to `IBookmarkRepository` interface
-2. Implement in `InMemoryBookmarkRepository`
-3. Add business logic to `BookmarksService`
-4. Create new endpoint in `BookmarksController`
-
-### Switching to Database
-
-1. Create new repository implementation (e.g., `PostgresBookmarkRepository`)
-2. Update provider in `BookmarksModule`
-3. No changes needed in service or controller layers
-
-## 🤝 Contributing
-
-1. Follow the existing code style and patterns
-2. Add tests for new features
-3. Update documentation as needed
-4. Ensure all linting passes
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-## 🚀 Features Implemented
-
-✅ RESTful API with NestJS  
-✅ TypeScript with strict typing  
-✅ Input validation with class-validator  
-✅ Comprehensive error handling  
-✅ Pagination with metadata  
-✅ Swagger API documentation  
-✅ CORS configuration  
-✅ Repository pattern for scalability  
-✅ 5,000 mock bookmarks  
-✅ Production-ready architecture
-
-Ready for production deployment! 🎉

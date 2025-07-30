@@ -1,5 +1,5 @@
 import React from 'react'
-import ThemeToggle from '@/components/ui/ThemeToggle'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 
 const Header = () => {
   return (

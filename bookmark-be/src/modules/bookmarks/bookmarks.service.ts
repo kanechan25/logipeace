@@ -111,9 +111,4 @@ export class BookmarksService {
       id,
     };
   }
-
-  async getStats(): Promise<{ totalBookmarks: number }> {
-    const totalBookmarks = await this.bookmarkRepository.count();
-    return { totalBookmarks };
-  }
 }

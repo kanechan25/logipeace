@@ -6,11 +6,9 @@ import InfiniteLoader from 'react-window-infinite-loader'
 import { useGetBookmarksQuery } from '@/stores/slices/query/bookmarks'
 import { useLoadMore } from '@/hooks/useLoadMore'
 import { Bookmark } from '@/types'
-import BookmarkItem from './BookmarkItem'
-import SearchBar from './SearchBar'
-import Loading from '../shared/Loading'
-import Error from '../shared/Error'
-import SearchNotFound from '../shared/SearchNotFound'
+import { BookmarkItem } from '@/components/features/bookmarks'
+import SearchBar from '@/components/features/search/SearchBar'
+import { Loading, Error, SearchNotFound } from '@/components/shared'
 
 const ITEM_HEIGHT = 120
 const ITEMS_PER_PAGE = 20

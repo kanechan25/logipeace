@@ -4,8 +4,8 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
-import { bookmarkSchema, BookmarkFormData } from '../../utils/zodSchemas'
-import { useAddBookmarkMutation } from '../../stores/slices/query/bookmarks'
+import { bookmarkSchema, BookmarkFormData } from '@/utils/zodSchemas'
+import { useAddBookmarkMutation } from '@/stores/slices/query/bookmarks'
 
 interface BookmarkFormProps {
   onSuccess?: () => void

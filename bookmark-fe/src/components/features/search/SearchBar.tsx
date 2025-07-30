@@ -9,16 +9,16 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search bookmarks...' }) => {
-  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 500)
+  const debouncedSearchQuery = useDebounce(searchQuery, 500)
 
   React.useEffect(() => {
-    onSearch(debouncedSearchTerm)
-  }, [debouncedSearchTerm, onSearch])
+    onSearch(debouncedSearchQuery)
+  }, [debouncedSearchQuery, onSearch])
 
   const handleClear = useCallback(() => {
-    setSearchTerm('')
+    setSearchQuery('')
   }, [])
 
   return (
@@ -37,13 +37,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search b
 
         <input
           type='text'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={placeholder}
           className='w-full pl-10 pr-10 py-2 bg-bg border border-border rounded-lg text-sm transition-colors focus:border-primary focus:outline-none'
         />
 
-        {searchTerm && (
+        {searchQuery && (
           <button
             onClick={handleClear}
             className='absolute right-3 text-text-muted hover:text-text transition-colors'

@@ -1,9 +1,8 @@
 import React from 'react'
 import ErrorBoundary from '@/components/hocs/ErrorBoundary'
-import CreateBookmark from '@/components/ui/CreateBookmark'
+import { CreateBookmark, BookmarkList } from '@/components/features/bookmarks'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import BookmarkList from '@/components/ui/BookmarkList'
 
 export default function BookmarkManager() {
   return (

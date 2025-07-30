@@ -1,9 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import Modal from '../shared/Modal'
-import BookmarkForm from './BookmarkForm'
-import Button from '../shared/Button'
+import { Modal, Button } from '@/components/shared'
+import { BookmarkForm } from '@/components/features/bookmarks'
 
 interface CreateBookmarkProps {
   trigger?: React.ReactNode
