@@ -20,15 +20,30 @@ export interface UpdateBookmarkRequest {
   description?: string
 }
 
-// API Response types
+// API Response types - Updated to match backend exactly
+export interface PaginationMeta {
+  currentPage: number
+  itemsPerPage: number
+  totalItems: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
+
 export interface PaginatedResponse<T> {
   data: T[]
-  meta: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
+  meta: PaginationMeta
+}
+
+// Stats response from backend
+export interface BookmarkStats {
+  totalBookmarks: number
+}
+
+// Delete response from backend
+export interface DeleteBookmarkResponse {
+  message: string
+  id: string
 }
 
 export interface ApiError {

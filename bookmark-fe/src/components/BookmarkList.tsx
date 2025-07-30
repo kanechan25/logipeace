@@ -37,8 +37,8 @@ const BookmarkList: React.FC<BookmarkListProps> = ({ searchQuery = '' }) => {
   useEffect(() => {
     if (bookmarksData) {
       setAllBookmarks(bookmarksData.data)
-      setHasNextPage(bookmarksData.meta.page < bookmarksData.meta.totalPages)
-      setCurrentPage(1)
+      setHasNextPage(bookmarksData.meta.hasNextPage)
+      setCurrentPage(bookmarksData.meta.currentPage)
     }
   }, [bookmarksData])
 
@@ -55,22 +55,25 @@ const BookmarkList: React.FC<BookmarkListProps> = ({ searchQuery = '' }) => {
     )
   }, [allBookmarks, searchQuery])
 
-  // Load more bookmarks
+  // Load more bookmarks using RTK Query
   const loadMoreBookmarks = useCallback(async () => {
     if (!hasNextPage || isFetching) return
 
     try {
       const nextPage = currentPage + 1
-      const response = await fetch(`/api/bookmarks?page=${nextPage}&limit=${ITEMS_PER_PAGE}`)
+      // Manually trigger a new query for the next page
+      const result = await fetch(`http://localhost:3001/api/v1/bookmarks?page=${nextPage}&limit=${ITEMS_PER_PAGE}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
 
-      if (response.ok) {
-        // In a real app, this would be handled by RTK Query
-        // For now, we'll use the mock data from our store
+      if (result.ok) {
+        const newData = await result.json()
+        // Append new data to existing bookmarks
+        setAllBookmarks((prev) => [...prev, ...newData.data])
         setCurrentPage(nextPage)
-        // Since we're using mock data, we'll simulate reaching the end
-        if (nextPage >= 3) {
-          setHasNextPage(false)
-        }
+        setHasNextPage(newData.meta.hasNextPage)
       }
     } catch (error) {
       console.error('Failed to load more bookmarks:', error)
@@ -121,14 +124,16 @@ const BookmarkList: React.FC<BookmarkListProps> = ({ searchQuery = '' }) => {
   if (error) {
     return (
       <div className='text-center py-8'>
-        <div className='text-error mb-2'>
-          <svg className='w-12 h-12 mx-auto mb-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+        <div className='flex text-error mb-2 justify-center'>
+          <svg width='48' height='48' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
             <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z'
+              d='M5.9 62c-3.3 0-4.8-2.4-3.3-5.3L29.3 4.2c1.5-2.9 3.9-2.9 5.4 0l26.7 52.5c1.5 2.9 0 5.3-3.3 5.3z'
+              fill='#ffce31'
             />
+            <g fill='#231f20'>
+              <path d='m27.8 23.6 2.8 18.5c.3 1.8 2.6 1.8 2.9 0l2.7-18.5c.5-7.2-8.9-7.2-8.4 0' />
+              <circle cx='32' cy='49.6' r='4.2' />
+            </g>
           </svg>
         </div>
         <h3 className='text-lg font-medium text-text mb-2'>Failed to load bookmarks</h3>

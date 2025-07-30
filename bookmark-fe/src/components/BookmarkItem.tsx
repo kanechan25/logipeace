@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -17,6 +17,12 @@ interface BookmarkItemProps {
 const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style }) => {
   const [deleteBookmark, { isLoading: isDeleting }] = useDeleteBookmarkMutation()
   const [showConfirm, setShowConfirm] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Fix hydration issue - only show relative time after client-side mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleDelete = async () => {
     try {
@@ -36,6 +42,16 @@ const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style 
     } catch {
       return url
     }
+  }
+
+  // Format date consistently for SSR/CSR
+  const formatDate = (dateString: string) => {
+    if (!mounted) {
+      // Return consistent format for SSR
+      return dayjs(dateString).format('MMM D, YYYY')
+    }
+    // Return relative time for CSR
+    return dayjs(dateString).fromNow()
   }
 
   return (
@@ -107,8 +123,8 @@ const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style 
 
         {/* Metadata */}
         <div className='flex items-center justify-between text-xs text-text-muted'>
-          <span>{dayjs(bookmark.createdAt).fromNow()}</span>
-          <span className='text-xs px-2 py-1 bg-bg-tertiary rounded'>#{bookmark.id}</span>
+          <span suppressHydrationWarning>{formatDate(bookmark.createdAt)}</span>
+          <span className='text-xs px-2 py-1 bg-bg-tertiary rounded'>#{bookmark.id.slice(-8)}</span>
         </div>
       </div>
     </div>

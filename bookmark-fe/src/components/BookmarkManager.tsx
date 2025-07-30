@@ -61,29 +61,6 @@ export default function BookmarkManager() {
             </div>
 
             {/* Bookmark List */}
-            {/* TODO: 
-              1. Infinite Loading (Cuộn vô hạn)
-                Cách hoạt động:
-                Frontend tải một phần dữ liệu ban đầu (ví dụ: 20 items) từ backend.
-                Khi người dùng cuộn chuột đến cuối danh sách, frontend tự động gọi API để lấy thêm dữ liệu (ví dụ: GET /bookmarks?page=2&limit=20) và nối vào danh sách hiện tại.
-                Triển khai:
-                Sử dụng event scroll hoặc thư viện như IntersectionObserver để phát hiện khi người dùng cuộn đến cuối.
-                Gọi API phân trang và cập nhật state để hiển thị thêm items.
-              2. Virtualization (Danh sách ảo)
-                Cách hoạt động:
-                Frontend chỉ render các items đang hiển thị trong viewport (khu vực người dùng nhìn thấy trên màn hình), ví dụ: 10-20 items thay vì toàn bộ danh sách.
-                Khi người dùng cuộn, các thành phần được tái sử dụng để hiển thị dữ liệu mới mà không tạo thêm DOM nodes.
-                Triển khai:
-                Sử dụng thư viện như react-window (NOT react-virtualized).
-                kết hợp với phân trang, frontend chỉ cần tải dữ liệu cần thiết cho vùng hiển thị.
-              3.PHẢI Kết hợp Infinite Loading + Virtualization
-                Cách hoạt động:
-                Tải dữ liệu theo từng phần từ backend (infinite loading).
-                Chỉ render các items trong viewport bằng virtualization.
-                Triển khai:
-                Gọi GET /bookmarks?page=1&limit=20 để lấy dữ liệu ban đầu.
-                Dùng react-window để render danh sách ảo.
-                Khi cuộn đến gần cuối vùng hiển thị, nhớ là gần cuối nhé, cách 5 items nữa là hết, gọi API để lấy thêm dữ liệu (page=2, page=3, v.v.). */}
             <ErrorBoundary
               fallback={
                 <div className='text-center py-8'>

@@ -30,7 +30,6 @@ const ThemeToggle: React.FC = () => {
       <button
         onClick={() => dispatch(toggleThemeMode())}
         className='p-2 rounded-lg border border-border hover:border-primary transition-colors'
-        aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
       >
         {mode === 'light' ? (
           <svg className='w-4 h-4 text-text' fill='none' stroke='currentColor' viewBox='0 0 24 24'>

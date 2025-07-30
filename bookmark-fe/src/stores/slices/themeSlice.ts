@@ -1,38 +1,39 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ThemeState, ThemeMode, ThemeColor } from '../../types'
 
-// Get initial theme from localStorage or use defaults
-const getInitialTheme = (): ThemeState => {
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('bookmark-theme')
-    if (savedTheme) {
-      try {
-        return JSON.parse(savedTheme)
-      } catch {
-        // Fall through to defaults
-      }
-    }
-
-    // Check system preference for dark mode
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    return {
-      mode: prefersDark ? 'dark' : 'light',
-      color: 'blue',
-    }
-  }
-
-  return {
-    mode: 'light',
-    color: 'blue',
-  }
+// Default theme state - same for SSR and CSR to prevent hydration mismatches
+const defaultThemeState: ThemeState = {
+  mode: 'light',
+  color: 'blue',
 }
 
-const initialState: ThemeState = getInitialTheme()
+// Initial state is always default to prevent hydration mismatches
+const initialState: ThemeState = defaultThemeState
 
 const themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
+    // New action to hydrate theme from localStorage after mount
+    hydrateTheme: (state) => {
+      if (typeof window !== 'undefined') {
+        const savedTheme = localStorage.getItem('bookmark-theme')
+        if (savedTheme) {
+          try {
+            const parsed = JSON.parse(savedTheme)
+            state.mode = parsed.mode || 'light'
+            state.color = parsed.color || 'blue'
+            return
+          } catch {
+            // Fall through to system preference check
+          }
+        }
+
+        // Check system preference for dark mode if no saved theme
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        state.mode = prefersDark ? 'dark' : 'light'
+      }
+    },
     setThemeMode: (state, action: PayloadAction<ThemeMode>) => {
       state.mode = action.payload
       if (typeof window !== 'undefined') {
@@ -54,5 +55,5 @@ const themeSlice = createSlice({
   },
 })
 
-export const { setThemeMode, setThemeColor, toggleThemeMode } = themeSlice.actions
+export const { hydrateTheme, setThemeMode, setThemeColor, toggleThemeMode } = themeSlice.actions
 export default themeSlice.reducer
