@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { useDebounce } from '../hooks'
+import { useDebounce } from '../../hooks'
 
 interface SearchBarProps {
   onSearch: (query: string) => void
@@ -11,8 +11,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search bookmarks...' }) => {
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Debounce search input to avoid excessive filtering
-  const debouncedSearchTerm = useDebounce(searchTerm, 300)
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
   React.useEffect(() => {
     onSearch(debouncedSearchTerm)
@@ -56,12 +55,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search b
           </button>
         )}
       </div>
-
-      {searchTerm && (
-        <div className='absolute top-full left-0 right-0 mt-1 text-xs text-text-muted'>
-          Searching for &ldquo;{searchTerm}&rdquo;
-        </div>
-      )}
     </div>
   )
 }

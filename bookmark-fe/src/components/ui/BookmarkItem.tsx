@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { Bookmark } from '../types'
-import { useDeleteBookmarkMutation } from '../stores/slices/bookmarksApi'
+import { Bookmark } from '../../types'
+import { useDeleteBookmarkMutation } from '../../stores/slices/bookmarks'
 
 dayjs.extend(relativeTime)
 

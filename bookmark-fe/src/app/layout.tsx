@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import 'react-toastify/dist/ReactToastify.css'
-import ClientProviders from './providers'
+import ClientProviders from '@/providers/ClientProviders'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

@@ -37,7 +37,6 @@ export const paginatedBookmarksSchema = z.object({
 // Theme schemas
 export const themeSchema = z.object({
   mode: z.enum(['light', 'dark']),
-  color: z.enum(['blue', 'green', 'red', 'purple', 'orange']),
 })
 
 // Export types derived from schemas

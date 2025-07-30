@@ -4,18 +4,21 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import { FixedSizeList as List } from 'react-window'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { toast } from 'react-toastify'
-import { useGetBookmarksQuery } from '../stores/slices/bookmarksApi'
+import { useGetBookmarksQuery } from '../../stores/slices/bookmarks'
 import BookmarkItem from './BookmarkItem'
-import { Bookmark } from '../types'
-
-interface BookmarkListProps {
-  searchQuery?: string
-}
+import { Bookmark } from '../../types'
+import SearchBar from './SearchBar'
+import Loading from '../shared/Loading'
+import Error from '../shared/Error'
 
 const ITEM_HEIGHT = 120
 const ITEMS_PER_PAGE = 20
 
-const BookmarkList: React.FC<BookmarkListProps> = ({ searchQuery = '' }) => {
+const BookmarkList: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query)
+  }, [])
   const [allBookmarks, setAllBookmarks] = useState<Bookmark[]>([])
   const [hasNextPage, setHasNextPage] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -106,42 +109,12 @@ const BookmarkList: React.FC<BookmarkListProps> = ({ searchQuery = '' }) => {
     [filteredBookmarks]
   )
 
-  // Loading state
   if (isLoading) {
-    return (
-      <div className='space-y-4'>
-        <div className='flex items-center justify-center py-8'>
-          <div className='flex items-center space-x-2 text-text-secondary'>
-            <div className='w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin'></div>
-            <span>Loading bookmarks...</span>
-          </div>
-        </div>
-      </div>
-    )
+    return <Loading />
   }
 
-  // Error state
   if (error) {
-    return (
-      <div className='text-center py-8'>
-        <div className='flex text-error mb-2 justify-center'>
-          <svg width='48' height='48' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
-            <path
-              d='M5.9 62c-3.3 0-4.8-2.4-3.3-5.3L29.3 4.2c1.5-2.9 3.9-2.9 5.4 0l26.7 52.5c1.5 2.9 0 5.3-3.3 5.3z'
-              fill='#ffce31'
-            />
-            <g fill='#231f20'>
-              <path d='m27.8 23.6 2.8 18.5c.3 1.8 2.6 1.8 2.9 0l2.7-18.5c.5-7.2-8.9-7.2-8.4 0' />
-              <circle cx='32' cy='49.6' r='4.2' />
-            </g>
-          </svg>
-        </div>
-        <h3 className='text-lg font-medium text-text mb-2'>Failed to load bookmarks</h3>
-        <p className='text-text-secondary text-sm'>
-          There was an error loading your bookmarks. Please try refreshing the page.
-        </p>
-      </div>
-    )
+    return <Error />
   }
 
   // Empty state
@@ -174,6 +147,10 @@ const BookmarkList: React.FC<BookmarkListProps> = ({ searchQuery = '' }) => {
 
   return (
     <div className='space-y-4'>
+      {/* Search Bar */}
+      <div className='max-w-md'>
+        <SearchBar onSearch={handleSearch} />
+      </div>
       {/* Results count */}
       <div className='flex items-center justify-between text-sm text-text-secondary'>
         <span>

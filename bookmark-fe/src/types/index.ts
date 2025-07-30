@@ -1,4 +1,3 @@
-// Bookmark types
 export interface Bookmark {
   id: string
   title: string
@@ -20,7 +19,6 @@ export interface UpdateBookmarkRequest {
   description?: string
 }
 
-// API Response types - Updated to match backend exactly
 export interface PaginationMeta {
   currentPage: number
   itemsPerPage: number
@@ -52,29 +50,23 @@ export interface ApiError {
   details?: Record<string, unknown>
 }
 
-// Theme types
 export type ThemeMode = 'light' | 'dark'
-export type ThemeColor = 'blue' | 'green' | 'red' | 'purple' | 'orange'
 
 export interface ThemeState {
   mode: ThemeMode
-  color: ThemeColor
 }
 
-// Form types
 export interface BookmarkFormData {
   title: string
   url: string
   description?: string
 }
 
-// UI State types
 export interface UIState {
   isLoading: boolean
   error: string | null
 }
 
-// Virtualization types
 export interface VirtualizedListProps {
   height: number
   width: string | number
