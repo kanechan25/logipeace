@@ -8,7 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -20,15 +19,13 @@ async function bootstrap() {
     }),
   );
 
-  // CORS configuration
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:8080'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 
-  // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('Bookmark Manager API')
     .setDescription('Backend API for managing bookmarks with full CRUD operations')
@@ -49,7 +46,6 @@ async function bootstrap() {
     customCssUrl: ['https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css'],
   });
 
-  // Global prefix for all routes
   const globalPrefix = 'api/v1';
   app.setGlobalPrefix(globalPrefix);
 

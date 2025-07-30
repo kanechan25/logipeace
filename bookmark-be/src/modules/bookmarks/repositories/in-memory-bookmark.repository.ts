@@ -116,6 +116,27 @@ export class InMemoryBookmarkRepository implements IBookmarkRepository, OnModule
     return this.bookmarks.get(id) || null;
   }
 
+  async update(id: string, updateData: Partial<Bookmark>): Promise<Bookmark | null> {
+    const existingBookmark = this.bookmarks.get(id);
+    if (!existingBookmark) {
+      return null;
+    }
+
+    // Create updated bookmark with new updatedAt timestamp
+    const updatedBookmark = new Bookmark({
+      ...existingBookmark,
+      ...updateData,
+      id, // Ensure ID doesn't change
+      createdAt: existingBookmark.createdAt, // Preserve original creation date
+      updatedAt: new Date(), // Update the timestamp
+    });
+
+    // Update in storage
+    this.bookmarks.set(id, updatedBookmark);
+
+    return updatedBookmark;
+  }
+
   async deleteById(id: string): Promise<boolean> {
     const bookmark = this.bookmarks.get(id);
     if (!bookmark) {

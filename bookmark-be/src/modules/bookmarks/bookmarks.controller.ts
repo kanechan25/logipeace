@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Delete,
   Body,
   Param,
@@ -22,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { PaginationQueryDto, PaginatedBookmarksDto } from './dto/pagination-query.dto';
 import { Bookmark } from './entities/bookmark.entity';
 
@@ -142,6 +144,50 @@ export class BookmarksController {
     return this.bookmarksService.findOne(id);
   }
 
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update a bookmark',
+    description: 'Update an existing bookmark by its unique identifier',
+  })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    description: 'Bookmark unique identifier',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Bookmark successfully updated',
+    type: Bookmark,
+  })
+  @ApiNotFoundResponse({
+    description: 'Bookmark not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'Bookmark with ID 123e4567-e89b-12d3-a456-426614174000 not found',
+        error: 'Not Found',
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid bookmark ID or update data',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: ['Please provide a valid URL'],
+        error: 'Bad Request',
+      },
+    },
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() updateBookmarkDto: UpdateBookmarkDto,
+  ): Promise<Bookmark> {
+    return this.bookmarksService.update(id, updateBookmarkDto);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -198,4 +244,4 @@ export class BookmarksController {
   async getStats(): Promise<{ totalBookmarks: number }> {
     return this.bookmarksService.getStats();
   }
-} 
+}

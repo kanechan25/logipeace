@@ -1,6 +1,7 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { Bookmark } from './entities/bookmark.entity';
 import { IBookmarkRepository } from './interfaces/bookmark-repository.interface';
@@ -67,6 +68,40 @@ export class BookmarksService {
     return bookmark;
   }
 
+  async update(id: string, updateBookmarkDto: UpdateBookmarkDto): Promise<Bookmark> {
+    if (!id || typeof id !== 'string') {
+      throw new BadRequestException('Invalid bookmark ID provided');
+    }
+
+    // Validate URL format if provided
+    if (updateBookmarkDto.url) {
+      try {
+        new URL(updateBookmarkDto.url);
+      } catch (error) {
+        throw new BadRequestException('Invalid URL format provided');
+      }
+    }
+
+    // Trim string fields if provided
+    const updateData: Partial<Bookmark> = {};
+    if (updateBookmarkDto.title !== undefined) {
+      updateData.title = updateBookmarkDto.title.trim();
+    }
+    if (updateBookmarkDto.url !== undefined) {
+      updateData.url = updateBookmarkDto.url.trim();
+    }
+    if (updateBookmarkDto.description !== undefined) {
+      updateData.description = updateBookmarkDto.description.trim();
+    }
+
+    const updatedBookmark = await this.bookmarkRepository.update(id, updateData);
+    if (!updatedBookmark) {
+      throw new NotFoundException(`Bookmark with ID ${id} not found`);
+    }
+
+    return updatedBookmark;
+  }
+
   async remove(id: string): Promise<{ message: string; id: string }> {
     if (!id || typeof id !== 'string') {
       throw new BadRequestException('Invalid bookmark ID provided');
@@ -87,4 +122,4 @@ export class BookmarksService {
     const totalBookmarks = await this.bookmarkRepository.count();
     return { totalBookmarks };
   }
-} 
+}

@@ -55,6 +55,7 @@ A robust, production-ready backend API for managing bookmarks built with NestJS,
 | `GET`    | `/api/v1/bookmarks`            | Get paginated bookmarks list |
 | `GET`    | `/api/v1/bookmarks/:id`        | Get bookmark by ID           |
 | `DELETE` | `/api/v1/bookmarks/:id`        | Delete bookmark by ID        |
+| `PUT`    | `/api/v1/bookmarks/:id`        | Update bookmark by ID        |
 | `GET`    | `/api/v1/bookmarks/meta/stats` | Get bookmark statistics      |
 
 ### Example Usage
