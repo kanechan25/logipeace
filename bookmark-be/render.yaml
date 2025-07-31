@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: bookmark-backend
+    runtime: node
+    env: node
+    region: oregon
+    plan: starter
+    rootDir: ./bookmark-be
+    buildCommand: |
+      corepack enable
+      corepack prepare pnpm@8.15.4 --activate
+      pnpm install --frozen-lockfile
+      pnpm run build
+    startCommand: node dist/main.js
+    healthCheckPath: /api/v1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    autoDeploy: true
+    branch: main
