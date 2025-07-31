@@ -9,7 +9,7 @@ services:
     buildCommand: |
       corepack enable
       corepack prepare pnpm@8.15.4 --activate
-      pnpm install --frozen-lockfile
+      pnpm install --frozen-lockfile --prod=false
       pnpm run build
     startCommand: node dist/main.js
     healthCheckPath: /api/v1
