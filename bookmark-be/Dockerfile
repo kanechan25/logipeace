@@ -33,6 +33,6 @@ USER nestjs
 EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "const http = require('http'); http.get('http://localhost:3001', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
+  CMD node -e "const http = require('http'); http.get('http://localhost:3001/api/v1', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
 
 CMD ["node", "dist/main.js"]
