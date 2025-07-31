@@ -18,5 +18,15 @@ services:
         value: production
       - key: PORT
         value: 3001
+      - key: API_PREFIX
+        value: api/v1
+      - key: CORS_ORIGIN
+        value: https://your-frontend-domain.com
+      - key: SWAGGER_TITLE
+        value: Bookmark Manager API
+      - key: SWAGGER_DESCRIPTION
+        value: Backend API for managing bookmarks with full CRUD operations
+      - key: SWAGGER_VERSION
+        value: 1.0
     autoDeploy: true
     branch: main
