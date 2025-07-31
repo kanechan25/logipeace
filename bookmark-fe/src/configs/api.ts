@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://logipeace.onrender.com/api/v1',
   timeout: 10000,
 } as const
 
