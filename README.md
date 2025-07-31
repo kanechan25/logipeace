@@ -1,8 +1,21 @@
-# 🔖 Bookmark Manager Backend
+# 🔖 Bookmark Manager
 
-A robust, production-ready backend API for managing bookmarks built with NestJS, TypeScript, and following enterprise-level architecture patterns.
+A bookmark management application with a robust NestJS backend API and modern React frontend.
 
 ## 📋 Features
+
+### Frontend (React + Next.js)
+
+- ✅ **Modern UI**: Clean, responsive design with Tailwind CSS
+- ✅ **Real-time Search**: Debounced search functionality
+- ✅ **Infinite Scroll**: Load more bookmarks on scroll
+- ✅ **Dark/Light Theme**: Theme toggle with system preference detection
+- ✅ **Form Validation**: Client-side validation with error handling
+- ✅ **Loading States**: Skeleton loaders and loading indicators
+- ✅ **Error Boundaries**: Graceful error handling
+- ✅ **TypeScript**: Full type safety
+
+### Backend (NestJS)
 
 - ✅ **Complete CRUD Operations**: Create, Read, Update, Delete bookmarks
 - ✅ **Advanced Pagination**: Efficient pagination with metadata
@@ -13,48 +26,74 @@ A robust, production-ready backend API for managing bookmarks built with NestJS,
 - ✅ **Production Ready**: CORS, validation pipes, error handling
 - ✅ **Mock Data**: 5,000 pre-generated bookmarks (in-memory storage)
 
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
+- Docker & Docker Compose (for containerized deployment)
 - pnpm/npm or yarn
 
-### Installation
+---
 
-1. **Clone and install dependencies:**
+## 🔧 Backend Setup
 
-   ```bash
-   npm install
-   ```
+### Docker Deployment (Recommended)
 
-2. **Start the development server:**
+1. **Deploy using the provided script:**
 
    ```bash
-   npm run start:dev
+   cd bookmark-be
+   chmod +x deploy-be.sh
+   ./deploy-be.sh
    ```
 
-3. **Access the application:**
+2. **Or manually with Docker Compose:**
+   ```bash
+   cd bookmark-be
+   docker-compose up -d
+   ```
+
+### Local Development
+
+1. **Navigate to backend directory:**
+
+   ```bash
+   cd bookmark-be
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Start development server:**
+
+   ```bash
+   pnpm run start:dev
+   ```
+
+4. **Access the application:**
    - API Base URL: `http://localhost:3001/api/v1`
    - Swagger Documentation: `http://localhost:3001/api/docs`
 
-## 📚 API Endpoints
+### API Endpoints
 
-### Bookmarks
+| Method   | Endpoint                | Description                   |
+| -------- | ----------------------- | ----------------------------- |
+| `POST`   | `/api/v1/bookmarks`     | Create a new bookmark         |
+| `GET`    | `/api/v1/bookmarks`     | Get paginated bookmarks list  |
+| `GET`    | `/api/v1/bookmarks/:id` | Get bookmark by ID            |
+| `DELETE` | `/api/v1/bookmarks/:id` | Delete bookmark by ID         |
+| `PUT`    | `/api/v1/bookmarks/:id` | Update bookmark by ID (bonus) |
 
-| Method   | Endpoint                | Description                  |
-| -------- | ----------------------- | ---------------------------- |
-| `POST`   | `/api/v1/bookmarks`     | Create a new bookmark        |
-| `GET`    | `/api/v1/bookmarks`     | Get paginated bookmarks list |
-| `GET`    | `/api/v1/bookmarks/:id` | Get bookmark by ID           |
-| `DELETE` | `/api/v1/bookmarks/:id` | Delete bookmark by ID        |
-| `PUT`    | `/api/v1/bookmarks/:id` | Update bookmark by ID        |
-
-### Example Usage
-
-#### Create Bookmark
+### Example API Usage
 
 ```bash
+# POST: Create bookmark
 curl -X POST http://localhost:3001/api/v1/bookmarks \
   -H "Content-Type: application/json" \
   -d '{
@@ -62,72 +101,93 @@ curl -X POST http://localhost:3001/api/v1/bookmarks \
     "url": "https://www.google.com",
     "description": "Search engine for finding information"
   }'
-```
 
-#### Get Bookmarks (Paginated)
-
-```bash
+# GET: Get bookmarks (paginated)
 curl "http://localhost:3001/api/v1/bookmarks?page=1&limit=20"
 ```
 
-#### Delete Bookmark
+---
 
-```bash
-curl -X DELETE http://localhost:3001/api/v1/bookmarks/{bookmark-id}
-```
+## 🎨 Frontend Setup
 
-## 🏗️ Architecture
+### Docker Deployment (Recommended)
 
-### Layered Architecture
+1. **Deploy using the provided script:**
 
-```
-├── Controllers/     # HTTP request/response handling
-├── Services/        # Business logic layer
-├── Repositories/    # Data access layer
-├── DTOs/           # Data transfer objects
-├── Entities/       # Domain models
-└── Interfaces/     # Contracts and abstractions
-```
+   ```bash
+   cd bookmark-fe
+   chmod +x deploy-fe.sh
+   ./deploy-fe.sh
+   ```
 
-### Key Design Patterns
+2. **Or manually with Docker Compose:**
+   ```bash
+   cd bookmark-fe
+   docker-compose up -d
+   ```
 
-- **Repository Pattern**: Abstracts data storage implementation
-- **Dependency Injection**: Loose coupling between components
-- **DTO Pattern**: Input validation and data transformation
-- **Decorator Pattern**: Validation, documentation, and metadata
+### Local Development
 
-## 📁 Project Structure
+1. **Navigate to frontend directory:**
 
-```
-src/
-├── modules/bookmarks/
-│   ├── bookmarks.module.ts          # Module configuration
-│   ├── bookmarks.controller.ts      # API endpoints
-│   ├── bookmarks.service.ts         # Business logic
-│   ├── dto/
-│   │   ├── create-bookmark.dto.ts   # Input validation
-│   │   └── pagination-query.dto.ts  # Pagination params
-│   ├── entities/
-│   │   └── bookmark.entity.ts       # Domain model
-│   ├── interfaces/
-│   │   └── bookmark-repository.interface.ts  # Repository contract
-│   └── repositories/
-│       └── in-memory-bookmark.repository.ts  # In-memory storage
-├── main.ts                          # Application bootstrap
-└── app.module.ts                    # Root module
-```
+   ```bash
+   cd bookmark-fe
+   ```
 
-## 🔧 Development
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Access the application:**
+   - Frontend URL: `http://localhost:3000`
 
 ### Available Scripts
 
 ```bash
 # Development
-npm run start:dev      # Start with hot reload
-npm run start:debug    # Start with debug mode
-
-# Production
-npm run build          # Build for production
-npm run start:prod     # Start production server
-
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run test         # Run tests
 ```
+
+---
+
+### Environment Configuration
+
+**Access the application:**
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:3001`
+- API Documentation: `http://localhost:3001/api/docs`
+  The applications are pre-configured for development. For production:
+
+- Backend: Set `PORT` environment variable (default: 3001)
+- Frontend: Configure API base URL in `src/configs/api.ts`
+
+---
+
+## 🚀 Production Deployment
+
+### Backend Production
+
+- Uses Node.js 18 Alpine for optimized container size
+- Includes health checks
+- Runs as non-root user for security
+- Configured for production environment
+
+### Frontend Production
+
+- Built with Next.js for optimal performance
+- Served via Nginx for static file serving
+- Optimized bundle size and caching
+- Responsive design for all devices
