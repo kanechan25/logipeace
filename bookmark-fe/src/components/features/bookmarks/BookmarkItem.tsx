@@ -1,13 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { Bookmark } from '@/types'
 import { useDeleteBookmarkMutation } from '@/stores/slices/query/bookmarks'
-
-dayjs.extend(relativeTime)
+import { RelativeTime } from '@/components/shared/RelativeTime'
 
 interface BookmarkItemProps {
   bookmark: Bookmark
@@ -17,21 +14,14 @@ interface BookmarkItemProps {
 const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style }) => {
   const [deleteBookmark, { isLoading: isDeleting }] = useDeleteBookmarkMutation()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [mounted, setMounted] = useState<boolean>(false)
-
-  // Fix hydration issue - only show relative time after client-side mount
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const handleDelete = async () => {
     try {
       await deleteBookmark(bookmark.id).unwrap()
       toast.success('Bookmark deleted successfully')
       setShowConfirm(false)
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete bookmark')
-      console.error('Delete error:', error)
     }
   }
 
@@ -42,16 +32,6 @@ const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style 
     } catch {
       return url
     }
-  }
-
-  // Format date consistently for SSR/CSR
-  const formatDate = (dateString: string) => {
-    if (!mounted) {
-      // Return consistent format for SSR
-      return dayjs(dateString).format('MMM D, YYYY')
-    }
-    // Return relative time for CSR
-    return dayjs(dateString).fromNow()
   }
 
   return (
@@ -123,7 +103,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = React.memo(({ bookmark, style 
 
         {/* Metadata */}
         <div className='flex items-center justify-between text-xs text-text-muted'>
-          <span suppressHydrationWarning>{formatDate(bookmark.createdAt)}</span>
+          <RelativeTime dateString={bookmark.createdAt} />
         </div>
       </div>
     </div>

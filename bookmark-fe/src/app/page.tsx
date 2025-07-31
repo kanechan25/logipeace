@@ -22,7 +22,6 @@ export default function BookmarkManager() {
             </ErrorBoundary>
           </div>
 
-          {/* Search and List Section */}
           <div className='space-y-6'>
             <ErrorBoundary fallback={<p className='text-center text-error'>Failed to load bookmark list</p>}>
               <BookmarkList />
