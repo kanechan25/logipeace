@@ -60,9 +60,9 @@ async function bootstrap() {
   const globalPrefix = configService.get<string>('API_PREFIX') || 'api/v1';
   app.setGlobalPrefix(globalPrefix);
 
-  const port = configService.get<number>('PORT') || 3001;
+  const port = process.env.PORT || 3001;
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
