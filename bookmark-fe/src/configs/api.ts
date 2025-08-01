@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://logipeace.onrender.com/api/v1',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://bookmark-manager-backend.fly.dev/api/v1s',
   timeout: 10000,
 } as const
 
