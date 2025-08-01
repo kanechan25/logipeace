@@ -2,6 +2,10 @@
 
 A bookmark management application with a robust NestJS backend API and modern React frontend.
 
+### Backend service live [here](https://bookmark-manager-backend.fly.dev/api/v1/bookmarks?page=1&limit=20)
+
+### Frontend web live [here](https://your-frontend-domain.com)
+
 ## 📋 Features
 
 ### Frontend (React + Next.js)
