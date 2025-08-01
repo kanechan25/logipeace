@@ -4,7 +4,7 @@ A bookmark management application with a robust NestJS backend API and modern Re
 
 ### Backend service live [here](https://bookmark-manager-backend.fly.dev/api/v1/bookmarks?page=1&limit=20)
 
-### Frontend web live [here](https://your-frontend-domain.com)
+### Frontend web live [here](https://logipeace-bookmark.vercel.app)
 
 ## 📋 Features
 
