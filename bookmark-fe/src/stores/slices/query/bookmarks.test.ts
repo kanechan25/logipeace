@@ -3,7 +3,9 @@ import { waitFor } from '@testing-library/react'
 import { bookmarksApi } from './bookmarks'
 import { createTestStore } from '@/utils/testing'
 import { handlers, apiCallTracker, resetTestBookmarks, getTestBookmarks } from '@/mocks/handlers'
-import type { CreateBookmarkRequest } from '@/types'
+import type { CreateBookmarkRequest, Bookmark } from '@/types'
+import { http, HttpResponse } from 'msw'
+import { API_CONFIG } from '@/configs/api'
 
 const server = setupServer(...handlers)
 
@@ -188,28 +190,83 @@ describe('bookmarksApi', () => {
       expect(testBookmarksAfter.find((b) => b.id === bookmarkIdToDelete)).toBeUndefined()
     })
 
-    it('should invalidate cache and trigger refetch after deletion', async () => {
+    it('should perform optimistic update and NOT trigger refetch after deletion', async () => {
+      // fetch bookmarks
       const getBookmarksPromise = store.dispatch(bookmarksApi.endpoints.getBookmarks.initiate({ page: 1, limit: 20 }))
       await getBookmarksPromise
-
       expect(apiCallTracker.getBookmarks).toBe(1)
 
+      // Store initial state
+      const initialState = store.getState()
+      const initialQueryKey = Object.keys(initialState.bookmarksApi.queries).find((key) => key.includes('getBookmarks'))
+      const initialBookmarks = initialQueryKey
+        ? (initialState.bookmarksApi.queries[initialQueryKey] as { data?: { data: Bookmark[] } })?.data?.data
+        : []
+      expect(initialBookmarks).toHaveLength(3)
+
+      // Delete a bookmark
       const bookmarkIdToDelete = '1'
       await store.dispatch(bookmarksApi.endpoints.deleteBookmark.initiate(bookmarkIdToDelete)).unwrap()
 
-      const getBookmarksPromise2 = store.dispatch(bookmarksApi.endpoints.getBookmarks.initiate({ page: 1, limit: 20 }))
+      // Check no refetch occur
+      const stateAfterDelete = store.getState()
+      const queryKeyAfterDelete = Object.keys(stateAfterDelete.bookmarksApi.queries).find((key) =>
+        key.includes('getBookmarks')
+      )
+      const bookmarksAfterDelete = queryKeyAfterDelete
+        ? (stateAfterDelete.bookmarksApi.queries[queryKeyAfterDelete] as { data?: { data: Bookmark[] } })?.data?.data
+        : []
 
-      await waitFor(() => {
-        expect(apiCallTracker.getBookmarks).toBe(2)
-      })
+      // one less bookmark
+      expect(bookmarksAfterDelete).toHaveLength(2)
+      expect(bookmarksAfterDelete?.find((bookmark: Bookmark) => bookmark.id === bookmarkIdToDelete)).toBeUndefined()
 
-      const result = await getBookmarksPromise2
-
-      expect(result.data?.data).toHaveLength(2)
-      expect(result.data?.data.find((bookmark) => bookmark.id === bookmarkIdToDelete)).toBeUndefined()
+      // NOT trigger a refetch
+      expect(apiCallTracker.getBookmarks).toBe(1) // Still 1, not 2
 
       getBookmarksPromise.unsubscribe()
-      getBookmarksPromise2.unsubscribe()
+    })
+
+    it('should perform optimistic update rollback on failure', async () => {
+      const getBookmarksPromise = store.dispatch(bookmarksApi.endpoints.getBookmarks.initiate({ page: 1, limit: 20 }))
+      await getBookmarksPromise
+      expect(apiCallTracker.getBookmarks).toBe(1)
+
+      const initialState = store.getState()
+      const initialQueryKey = Object.keys(initialState.bookmarksApi.queries).find((key) => key.includes('getBookmarks'))
+      const initialBookmarks = initialQueryKey
+        ? (initialState.bookmarksApi.queries[initialQueryKey] as { data?: { data: Bookmark[] } })?.data?.data
+        : []
+      expect(initialBookmarks).toHaveLength(3)
+
+      // Mock return an error
+      server.use(
+        http.delete(`${API_CONFIG.baseUrl}/bookmarks/1`, () => {
+          return HttpResponse.json({ message: 'Internal server error' }, { status: 500 })
+        })
+      )
+
+      try {
+        await store.dispatch(bookmarksApi.endpoints.deleteBookmark.initiate('1')).unwrap()
+        expect(true).toBe(false)
+      } catch (error) {
+        expect((error as { status: number }).status).toBe(500)
+      }
+
+      // rolled back to original state
+      const stateAfterFailure = store.getState()
+      const queryKeyAfterFailure = Object.keys(stateAfterFailure.bookmarksApi.queries).find((key) =>
+        key.includes('getBookmarks')
+      )
+      const bookmarksAfterFailure = queryKeyAfterFailure
+        ? (stateAfterFailure.bookmarksApi.queries[queryKeyAfterFailure] as { data?: { data: Bookmark[] } })?.data?.data
+        : []
+
+      // original state (3 bookmarks)
+      expect(bookmarksAfterFailure).toHaveLength(3)
+      expect(bookmarksAfterFailure?.find((bookmark: Bookmark) => bookmark.id === '1')).toBeDefined()
+
+      getBookmarksPromise.unsubscribe()
     })
 
     it('should handle not found error when deleting non-existent bookmark', async () => {
@@ -222,6 +279,43 @@ describe('bookmarksApi', () => {
       } catch (error) {
         expect((error as { status: number }).status).toBe(404)
       }
+    })
+
+    it('should update pagination metadata after optimistic deletion', async () => {
+      const getBookmarksPromise = store.dispatch(bookmarksApi.endpoints.getBookmarks.initiate({ page: 1, limit: 20 }))
+      await getBookmarksPromise
+      expect(apiCallTracker.getBookmarks).toBe(1)
+
+      const initialState = store.getState()
+      const initialQueryKey = Object.keys(initialState.bookmarksApi.queries).find((key) => key.includes('getBookmarks'))
+      const initialMeta = initialQueryKey
+        ? (
+            initialState.bookmarksApi.queries[initialQueryKey] as {
+              data?: { meta: { totalItems: number; totalPages: number } }
+            }
+          )?.data?.meta
+        : null
+      expect(initialMeta?.totalItems).toBe(3)
+
+      const bookmarkIdToDelete = '1'
+      await store.dispatch(bookmarksApi.endpoints.deleteBookmark.initiate(bookmarkIdToDelete)).unwrap()
+
+      const stateAfterDelete = store.getState()
+      const queryKeyAfterDelete = Object.keys(stateAfterDelete.bookmarksApi.queries).find((key) =>
+        key.includes('getBookmarks')
+      )
+      const metaAfterDelete = queryKeyAfterDelete
+        ? (
+            stateAfterDelete.bookmarksApi.queries[queryKeyAfterDelete] as {
+              data?: { meta: { totalItems: number; totalPages: number } }
+            }
+          )?.data?.meta
+        : null
+
+      expect(metaAfterDelete?.totalItems).toBe(2)
+      expect(metaAfterDelete?.totalPages).toBe(1)
+
+      getBookmarksPromise.unsubscribe()
     })
   })
 
@@ -275,21 +369,26 @@ describe('bookmarksApi', () => {
       await waitFor(() => {
         expect(apiCallTracker.getBookmarks).toBe(2)
       })
-
       const afterAddResult = await afterAddPromise
       expect(afterAddResult.data?.data).toHaveLength(4)
 
       await store.dispatch(bookmarksApi.endpoints.deleteBookmark.initiate('1')).unwrap()
-      const afterDeletePromise = store.dispatch(bookmarksApi.endpoints.getBookmarks.initiate({ page: 1, limit: 20 }))
-      await waitFor(() => {
-        expect(apiCallTracker.getBookmarks).toBe(3)
-      })
-      const afterDeleteResult = await afterDeletePromise
-      expect(afterDeleteResult.data?.data).toHaveLength(3)
+
+      // NOT trigger a refetch
+      expect(apiCallTracker.getBookmarks).toBe(2) // Still 2, not 3
+      const stateAfterDelete = store.getState()
+      const queryKeyAfterDelete = Object.keys(stateAfterDelete.bookmarksApi.queries).find((key) =>
+        key.includes('getBookmarks')
+      )
+      const bookmarksAfterDelete = queryKeyAfterDelete
+        ? (stateAfterDelete.bookmarksApi.queries[queryKeyAfterDelete] as { data?: { data: Bookmark[] } })?.data?.data
+        : []
+
+      expect(bookmarksAfterDelete).toHaveLength(3) // 4 - 1 = 3
+      expect(bookmarksAfterDelete?.find((bookmark: Bookmark) => bookmark.id === '1')).toBeUndefined()
 
       initialPromise.unsubscribe()
       afterAddPromise.unsubscribe()
-      afterDeletePromise.unsubscribe()
     })
   })
 })
