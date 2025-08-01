@@ -12,12 +12,16 @@ A bookmark management application with a robust NestJS backend API and modern Re
 
 - ✅ **Modern UI**: Clean, responsive design with Tailwind CSS
 - ✅ **Real-time Search**: Debounced search functionality
-- ✅ **Infinite Scroll**: Load more bookmarks on scroll
+- ✅ **Infinite Scroll + Virtualization**: Virtualization render and load more bookmarks on scroll
+- ✅ **Redux toolkit + RTK query**: API endpoint handling as hooks
 - ✅ **Dark/Light Theme**: Theme toggle with system preference detection
 - ✅ **Form Validation**: Client-side validation with error handling
 - ✅ **Loading States**: Skeleton loaders and loading indicators
 - ✅ **Error Boundaries**: Graceful error handling
 - ✅ **TypeScript**: Full type safety
+- ✅ **Unit Testing**: Jest + React Testing Library with MSW for API mocking in tests
+- ✅ **Code Quality**: ESLint + Prettier for consistent code formatting
+- ✅ **Git Hooks**: Husky + lint-staged for pre-commit code quality checks
 
 ### Backend (NestJS)
 
@@ -160,11 +164,45 @@ curl "http://localhost:3001/api/v1/bookmarks?page=1&limit=20"
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
+
+# Code Quality
 npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+
+# Testing
 npm run test         # Run tests
+npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+npm run test:bookmarks # Run bookmark-specific tests
+
+# Git Hooks (automated)
+npm run prepare      # Setup Husky git hooks
 ```
 
 ---
+
+### Development Tools & Testing
+
+**Code Quality Setup:**
+
+- **ESLint**: Configured with Next.js rules and TypeScript support
+- **Prettier**: Code formatting with custom configuration
+- **Husky**: Git hooks for pre-commit quality checks
+- **lint-staged**: Runs ESLint and Prettier on staged files
+
+**Testing Setup:**
+
+- **Jest**: Test runner with TypeScript support
+- **React Testing Library**: Component testing utilities
+- **MSW (Mock Service Worker)**: API mocking for tests
+- **Custom Test Utilities**: Reusable testing helpers in `src/utils/testing.tsx`
+
+**Test Coverage:**
+
+- Component tests for UI components
+- Redux store tests for state management
+- API integration tests with mocked endpoints
+- Form validation and user interaction tests
 
 ### Environment Configuration
 
@@ -173,7 +211,8 @@ npm run test         # Run tests
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:3001`
 - API Documentation: `http://localhost:3001/api/docs`
-  The applications are pre-configured for development. For production:
+
+The applications are pre-configured for development. For production:
 
 - Backend: Set `PORT` environment variable (default: 3001)
 - Frontend: Configure API base URL in `src/configs/api.ts`
