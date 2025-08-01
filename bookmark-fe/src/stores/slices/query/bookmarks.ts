@@ -18,7 +18,7 @@ export const bookmarksApi = createApi({
     },
     timeout: API_CONFIG.timeout,
   }),
-  tagTypes: ['Bookmark'],
+  tagTypes: ['Bookmark', 'BookmarkList'],
   endpoints: (builder) => ({
     // Get paginated bookmarks
     getBookmarks: builder.query<PaginatedResponse<Bookmark>, { page?: number; limit?: number }>({
@@ -26,7 +26,13 @@ export const bookmarksApi = createApi({
         url: '/bookmarks',
         params: { page, limit },
       }),
-      providesTags: ['Bookmark'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({ type: 'Bookmark' as const, id })),
+              { type: 'BookmarkList' as const, id: 'LIST' },
+            ]
+          : [{ type: 'BookmarkList', id: 'LIST' }],
     }),
 
     // get bookmark by id
@@ -42,7 +48,7 @@ export const bookmarksApi = createApi({
         method: 'POST',
         body: newBookmark,
       }),
-      invalidatesTags: ['Bookmark'],
+      invalidatesTags: [{ type: 'BookmarkList', id: 'LIST' }],
     }),
 
     // update NOT required, but I built it for future reference
@@ -52,7 +58,10 @@ export const bookmarksApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Bookmark', id }, 'Bookmark'],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Bookmark', id },
+        { type: 'BookmarkList', id: 'LIST' },
+      ],
     }),
 
     // Delete bookmark
@@ -61,7 +70,51 @@ export const bookmarksApi = createApi({
         url: `/bookmarks/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Bookmark'],
+      // Optimistic update
+      async onQueryStarted(id, { dispatch, queryFulfilled, getState }) {
+        const state = getState() as { [key: string]: { queries?: Record<string, unknown> } }
+        const queries = state[bookmarksApi.reducerPath]?.queries || {}
+        const patchResults: Array<{ undo?: () => void }> = []
+
+        Object.keys(queries).forEach((queryKey) => {
+          if (queryKey.includes('getBookmarks')) {
+            try {
+              const queryMatch = queryKey.match(/getBookmarks\((.+)\)/)
+              if (queryMatch) {
+                const queryParams = JSON.parse(queryMatch[1])
+                if (queryParams.page && queryParams.limit) {
+                  const patchResult = dispatch(
+                    bookmarksApi.util.updateQueryData('getBookmarks', queryParams, (draft) => {
+                      if (draft && draft.data) {
+                        const index = draft.data.findIndex((bookmark) => bookmark.id === id)
+                        if (index !== -1) {
+                          // Remove the item
+                          draft.data.splice(index, 1)
+                          // Update pagination
+                          draft.meta.totalItems = Math.max(0, draft.meta.totalItems - 1)
+                          draft.meta.totalPages = Math.ceil(draft.meta.totalItems / draft.meta.itemsPerPage)
+                          // if (draft.data.length === 0 && draft.meta.currentPage > 1) {}
+                        }
+                      }
+                    })
+                  )
+                  patchResults.push(patchResult)
+                }
+              }
+            } catch {}
+          }
+        })
+
+        try {
+          await queryFulfilled
+        } catch {
+          patchResults.forEach((patchResult) => {
+            if (patchResult.undo) {
+              patchResult.undo()
+            }
+          })
+        }
+      },
     }),
   }),
 })

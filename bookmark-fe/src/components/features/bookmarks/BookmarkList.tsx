@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FixedSizeList as List } from 'react-window'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { useGetBookmarksQuery } from '@/stores/slices/query/bookmarks'
-import { useLoadMore } from '@/hooks/useLoadMore'
-import { Bookmark } from '@/types'
+import { useLoadMore, useAllBookmarks, useFilteredBookmarks } from '@/hooks'
 import { BookmarkItem } from '@/components/features/bookmarks'
 import SearchBar from '@/components/features/search/SearchBar'
 import { Loading, Error, SearchNotFound } from '@/components/shared'
@@ -15,8 +14,6 @@ const ITEMS_PER_PAGE = 20
 
 const BookmarkList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [allBookmarks, setAllBookmarks] = useState<Bookmark[]>([])
-  const [hasNextPage, setHasNextPage] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(1)
 
   // Fetch first page
@@ -34,10 +31,8 @@ const BookmarkList: React.FC = () => {
 
   const { loadMore, isLoading: isLoadingMore } = useLoadMore({
     limit: ITEMS_PER_PAGE,
-    onSuccess: (newData) => {
-      setAllBookmarks((prev) => [...prev, ...newData.data])
+    onSuccess: () => {
       setCurrentPage((prev) => prev + 1)
-      setHasNextPage(newData.meta.hasNextPage)
     },
   })
 
@@ -45,31 +40,14 @@ const BookmarkList: React.FC = () => {
     setSearchQuery(query)
   }, [])
 
-  useEffect(() => {
-    if (bookmarksData) {
-      setAllBookmarks(bookmarksData.data)
-      setHasNextPage(bookmarksData.meta.hasNextPage)
-      setCurrentPage(bookmarksData.meta.currentPage)
-    }
-  }, [bookmarksData])
-
-  const filteredBookmarks = useMemo(() => {
-    if (!searchQuery.trim()) return allBookmarks
-
-    const query = searchQuery.toLowerCase()
-    return allBookmarks.filter(
-      (bookmark) =>
-        bookmark.title.toLowerCase().includes(query) ||
-        bookmark.url.toLowerCase().includes(query) ||
-        bookmark.description?.toLowerCase().includes(query)
-    )
-  }, [allBookmarks, searchQuery])
+  const allBookmarks = useAllBookmarks()
+  const filteredBookmarks = useFilteredBookmarks(allBookmarks, searchQuery)
 
   const loadMoreBookmarks = useCallback(async () => {
-    if (!hasNextPage || isFetching || isLoadingMore) return
+    if (!bookmarksData?.meta.hasNextPage || isFetching || isLoadingMore) return
     const nextPage = currentPage + 1
     await loadMore(nextPage)
-  }, [hasNextPage, isFetching, isLoadingMore, currentPage, loadMore])
+  }, [bookmarksData?.meta.hasNextPage, isFetching, isLoadingMore, currentPage, loadMore])
 
   const isItemLoaded = useCallback((index: number) => !!filteredBookmarks[index], [filteredBookmarks])
 
@@ -91,6 +69,7 @@ const BookmarkList: React.FC = () => {
     return <Error />
   }
 
+  const hasNextPage = bookmarksData?.meta.hasNextPage ?? false
   const itemCount = hasNextPage ? filteredBookmarks.length + 1 : filteredBookmarks.length
 
   return (
